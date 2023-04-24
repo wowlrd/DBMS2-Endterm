@@ -1,4 +1,14 @@
-
+CREATE OR REPLACE PROCEDURE group_clothes_by_name IS                          		            
+BEGIN
+  FOR c IN (
+    SELECT type, COUNT(*) as num_clothes                                                              		           
+    FROM clothes
+    GROUP BY type                                                                                     			            
+    ORDER BY type                                                                                     			           
+  ) LOOP
+    DBMS_OUTPUT.PUT_LINE('Clothing Type: ' || c.type || ', Number of Clothes: ' || c.num_clothes);   
+  END LOOP;
+END;
 
 
 BEGIN
@@ -6,24 +16,6 @@ BEGIN
 END;
 
 
-
-
-CREATE OR REPLACE FUNCTION totalnumberOrders                             
-RETURN number IS                                                                                      
-   total number(20) := 0;                                                                              
-BEGIN 
-   SELECT count(*) into total                                                                       
-FROM OrderProduct;
-  RETURN total;                                                                                              
-END;  
-/
-
-DECLARE 										
-   c number(20); 				      
-BEGIN 
-   c := totalnumberOrders(); 			    
-   dbms_output.put_line('Total no. of Orders: ' || c); 	   
-END; 
 
 
 DECLARE 
