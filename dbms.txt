@@ -1,14 +1,4 @@
-CREATE OR REPLACE PROCEDURE group_clothes_by_name IS                          		            
-BEGIN
-  FOR c IN (
-    SELECT type, COUNT(*) as num_clothes                                                              		           
-    FROM clothes
-    GROUP BY type                                                                                     			            
-    ORDER BY type                                                                                     			           
-  ) LOOP
-    DBMS_OUTPUT.PUT_LINE('Clothing Type: ' || c.type || ', Number of Clothes: ' || c.num_clothes);   
-  END LOOP;
-END;
+
 
 
 BEGIN
