@@ -1,0 +1,122 @@
+
+Procedure -- group_by_sizes 
+
+create or replace procedure group_by_sizes is             //Create or modify a procedure named "group_by_sizes".
+begin                                                     //The beginning of the code block.
+for s in(                                                 //For each unique value of "sizes" in the "clothes" table.
+select sizes from clothes group by sizes)
+loop                                                      //The beginning of the loop.
+    dbms_output.put_line('Sizes ' || s.sizes || '.');     //Displays each unique "sizes" value on the screen.
+end loop;                                                 //The end of the loop.
+end;                                                      //End of code block.
+
+begin                        			    //Calling the procedure "group_by_sizes".
+group_by_sizes;
+end;
+/
+
+
+
+
+
+exception --- ex_invalid_exception
+
+DECLARE 
+   c_type clothes.type%type := :cc_type; 
+   c_size clothes.sizes%type; 
+   c_sex clothes.sex%type;  
+   c_amount clothes.amount%type;                 	     			//declare the variables c_type, c_size, c_sex, c_amount and c_price, as well as the ex_invalid_type exception.
+   c_price clothes.price%type;
+   ex_invalid_type  EXCEPTION; 
+BEGIN 									//The beginning of the code block.
+   IF lenght(c_type) <= 4 THEN 
+      RAISE ex_invalid_type; 						//if the length of the type is less than 4, an ex_invalid_type exception is raised 
+   ELSE 									
+      SELECT  sizes,sex,amount,price INTO c_sizes,c_sex,c_amount,c_price 	//Otherwise, it selects the columns "size", "gender", "amount", and "price" from the "clothes" table into the appropriate variables using the "SELECT 										//"SELECT INTO" statement , where  type equal c_type.
+      FROM clothes 
+      WHERE type = c_type;
+      DBMS_OUTPUT.PUT_LINE ('Size:'||  c_size);  
+      DBMS_OUTPUT.PUT_LINE ('Sex: ' || c_sex); 
+      DBMS_OUTPUT.PUT_LINE ('Amount: ' || c_amount);				//Then, it outputs the values of the "c_size", "c_sex", "c_amount", and "c_price" variables using the "DBMS_OUTPUT.PUT_LINE" statement.
+      DBMS_OUTPUT.PUT_LINE ('Price: ' || c_price);
+   END IF; 
+
+EXCEPTION 								//The beginning of the exception block
+   WHEN ex_invalid_type THEN 						// in "ex_invalid_type" exception displays 'Clothes type should be at least 5 characters long'	
+      dbms_output.put_line('Clothes type should be at least 5 characters long'); 
+   WHEN no_data_found THEN 						// in "no_data_found" exception displays 'No such clothes type!'
+      dbms_output.put_line('No such clothes type!'); 
+   WHEN others THEN 							//  in other exceptions displays 'error'
+      dbms_output.put_line('Error!');  
+END;									//End of code block.
+
+
+
+
+
+
+
+PROCEDURE --group_clothes_by_name
+
+CREATE OR REPLACE PROCEDURE group_clothes_by_name IS                                                  //define a stored procedure named group_clothes_by_name
+BEGIN
+  FOR c IN (
+    SELECT type, COUNT(*) as num_clothes                                                              //This is a loop that selects the type column and counts the number of clothes of each type from the clothes 
+    FROM clothes
+    GROUP BY type                                                                                     //group the result by type
+    ORDER BY type                                                                                     //sort groups by type
+  ) LOOP
+    DBMS_OUTPUT.PUT_LINE('Clothing Type: ' || c.type || ', Number of Clothes: ' || c.num_clothes);    //type and num_clothes columns are displayed
+  END LOOP;
+END;
+
+BEGIN
+  group_clothes_by_name;                                                                               //call the group_clothes_by_name procedure without input values for its execution
+END;
+
+
+
+
+
+FUNCTION totalnumberOrders
+
+CREATE OR REPLACE FUNCTION totalnumberOrders                                                           //create or replace the function with the name "totalnumberOrders"  
+RETURN number IS                                                                                       //the function will return a value of type "number"
+   total number(20) := 0;                                                                              //declare a variable "total" of type "number" and assign value "0" to it
+BEGIN 
+   SELECT count(*) into total                                                                          //run a query on the "ordersproduct" table, get the number of entries and assign it to the "total" variable
+   FROM orderproduct; 
+   RETURN total;                                                                                       //return the value of the variable "total"
+END;  
+
+
+DECLARE 										
+   c number(20); 										    //declares a variable c of type number(20) 
+BEGIN 
+   c := totalnumberOrders(); 								    //assigns it the result of calling the function totalnumberOrders()
+   dbms_output.put_line('Total no. of Orders: ' || c); 					    //displays the value of c along with text 'Total no. of Orders: '
+END; 
+
+
+
+
+
+
+
+
+trigger---
+
+
+
+CREATE OR REPLACE TRIGGER client_before_insert                                        		   //This is a trigger named client_before_insert that is defined to execute before a new row is inserted into the clients table.
+BEFORE INSERT ON clients
+FOR EACH ROW
+DECLARE
+  rows_count NUMBER;									   //It declares a variable rows_count of type NUMBER.
+BEGIN
+  SELECT COUNT(*) INTO rows_count FROM clients;						   //selects the count of rows from the clients table into rows_count
+  DBMS_OUTPUT.PUT_LINE('Current number of rows in client table: ' || rows_count);		   //outputs a message to the console with the current number of rows in the clients table.
+ 
+END;
+
+
