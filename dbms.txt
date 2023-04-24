@@ -16,6 +16,23 @@ BEGIN
 END;
 
 
+CREATE OR REPLACE FUNCTION totalnumberOrders                             
+RETURN number IS                                                                                      
+   total number(20) := 0;                                                                              
+BEGIN 
+   SELECT count(*) into total                                                                       
+FROM OrderProduct;
+  RETURN total;                                                                                              
+END;  
+/
+
+DECLARE 										
+   c number(20); 				      
+BEGIN 
+   c := totalnumberOrders(); 			    
+   dbms_output.put_line('Total no. of Orders: ' || c); 	   
+END; 
+
 
 
 DECLARE 
