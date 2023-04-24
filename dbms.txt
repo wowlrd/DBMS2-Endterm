@@ -1,0 +1,101 @@
+CREATE OR REPLACE PROCEDURE group_clothes_by_name IS                          		            
+BEGIN
+  FOR c IN (
+    SELECT type, COUNT(*) as num_clothes                                                              		           
+    FROM clothes
+    GROUP BY type                                                                                     			            
+    ORDER BY type                                                                                     			           
+  ) LOOP
+    DBMS_OUTPUT.PUT_LINE('Clothing Type: ' || c.type || ', Number of Clothes: ' || c.num_clothes);   
+  END LOOP;
+END;
+
+
+
+BEGIN
+  group_clothes_by_name;   
+END;
+
+
+
+CREATE OR REPLACE FUNCTION totalnumberOrders                             
+RETURN number IS                                                                                      
+   total number(20) := 0;                                                                              
+BEGIN 
+   SELECT count(*) into total                                                                       
+FROM OrderProduct;
+  RETURN total;                                                                                              
+END;  
+/
+
+DECLARE 										
+   c number(20); 				      
+BEGIN 
+   c := totalnumberOrders(); 			    
+   dbms_output.put_line('Total no. of Orders: ' || c); 	   
+END; 
+
+
+DECLARE 
+   c_type clothes.type%type := :cc_type; 
+   c_size clothes.sizes%type; 
+   c_sex clothes.sex%type;  
+   c_amount clothes.amount%type; 
+   c_price clothes.price%type;
+   ex_invalid_type  EXCEPTION; 
+BEGIN 
+   IF length(c_type) <= 4 THEN 
+      RAISE ex_invalid_type; 
+   ELSE 
+      SELECT  sizes,sex,amount,price INTO c_size,c_sex,c_amount,c_price 
+      FROM clothes 
+      WHERE type = c_type;
+      DBMS_OUTPUT.PUT_LINE ('Size:'||  c_size);  
+      DBMS_OUTPUT.PUT_LINE ('Sex: ' || c_sex); 
+      DBMS_OUTPUT.PUT_LINE ('Amount: ' || c_amount);
+      DBMS_OUTPUT.PUT_LINE ('Price: ' || c_price);
+   END IF; 
+
+EXCEPTION 
+   WHEN ex_invalid_type THEN 
+      dbms_output.put_line('Clothes type should be at least 5 characters long'); 
+   WHEN no_data_found THEN 
+      dbms_output.put_line('No such clothes type!'); 
+   WHEN others THEN 
+      dbms_output.put_line('Error!');  
+END;
+
+
+
+
+
+
+
+create or replace procedure group_by_sizes is             
+begin                                                     	
+for s in(                                                	
+select sizes from clothes group by sizes)
+loop                                                      	
+    dbms_output.put_line('Sizes ' || s.sizes || '.');    
+end loop;                                                                           
+end;                                                                                     
+
+begin                        			                        
+group_by_sizes;
+end;
+/
+
+
+CREATE OR REPLACE TRIGGER client_before_insert                          
+BEFORE INSERT ON clients
+FOR EACH ROW
+DECLARE
+  rows_count NUMBER;	
+BEGIN
+  SELECT COUNT(*) INTO rows_count FROM clients;	               
+
+  DBMS_OUTPUT.PUT_LINE('Current number of rows in client table: ' || rows_count);    
+ 
+END;
+
+                                                                        	                                 
